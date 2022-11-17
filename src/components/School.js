@@ -1,18 +1,27 @@
-
-import './css/School.css';
+import React, {useState} from 'react';
 
 import {useNavigate} from 'react-router-dom'
+import axios from 'axios';
+import './css/School.css';
+
+import { finalService } from './Requests';
 
 function School(props){
     
     const navigate = useNavigate();
+    const [deleteLoader, setDeleteLoader] = useState(false);
 
-    const handleDeleteFunc = () =>{
-        const filterSchools = props.schoolList.filter((school)=>{
-            return school.id != props.school.id
-        })
-        localStorage.setItem('schools', JSON.stringify(filterSchools))
-        props.setSchoolList(filterSchools)
+
+    const handleDeleteFunc = async() =>{
+        setDeleteLoader(true)
+        
+        const deleteEntity =  await finalService['delete'](props.school.id)
+
+        if(deleteEntity.data.isSuccessful){
+            props.setHandleRefresh(true);
+        }
+        setDeleteLoader(false)
+
     }
 
     const handleEditFunc = () => {
@@ -21,11 +30,13 @@ function School(props){
 
     return(
         <div className='school'>
-            <div className='schoolId'><span><strong>School ID: </strong></span>{props.school.id}</div>
+            <div className='Level'><span><strong>Level: </strong></span>{props.school.level}</div>
             <p className='schoolLocation'><strong>Location: </strong>{props.school.location}</p>
-            <p className='schoolName'>This is {props.school.name} School.</p>
-            <button onClick={handleDeleteFunc} className='btn del cp'>Delete</button>
-            <button onClick={handleEditFunc} className='btn edit cp'>Edit</button>
+            <p className='schoolName'>This is <b style={{textTransform: 'capitalize'}}>{props.school.name}</b> School.</p>
+            <div style={{display : 'flex', justifyContent : 'center'}}>
+                <button onClick={handleDeleteFunc} className='btn del cp'>{deleteLoader && <div className='btnLoader'></div>}Delete</button>
+                <button onClick={handleEditFunc} className='btn edit cp'>Edit</button>
+            </div>
         </div>
     )
 }
