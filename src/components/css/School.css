@@ -6,7 +6,7 @@
     box-shadow: 0 0 10px #ccc;
     gap:8px;
     align-items: center;
-    width: 30%;
+    width: 35%;
     margin: auto;
     margin-top: 32px;
 
@@ -17,12 +17,13 @@
 }
 
 .edit{
-    background-color: blanchedalmond;
+    background-color: #2f80ED;
     margin-left: 8px;
-
+    color: white;
 }
 .del{
     background-color: red;
+    display: flex;
 }
 
 .editSchool{
@@ -79,3 +80,47 @@ input{
 p{
     margin: 8px;
 }
+
+.loader {
+    border: 12px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 12px solid #3498db;
+    width: 50px;
+    margin: auto;
+    margin-top: 15%;
+    height: 50px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .btnLoader, .editLoader{
+    border: 3px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 3px solid red;
+    width: 10px;
+    height: 10px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+    margin: unset;
+    margin-right: 8px;
+  }
+
+  .editLoader{
+    border-top: 3px solid #2f80ED !important;
+  }
+
+  button{
+      border: 0px;
+      outline: 0px;
+  }

@@ -1,58 +1,63 @@
+import axios from 'axios';
 import React, {useState} from 'react'
 
 import {useLocation , useNavigate} from 'react-router-dom'
 
 import './css/School.css'
+import { finalService } from './Requests';
 
 export default function EditSchool() {
 
     const {state} = useLocation();
     const navigate = useNavigate();
 
-    const [name, setName] = useState(state?.name || "");
-    const [id, setId] = useState(state?.id || "");
+    const [name, setName]         = useState(state?.name || "");
+    const [level, setLevel]       = useState(state?.level || "");
     const [location, setLocation] = useState(state?.location || "");
-    const [error, setError] = useState(false);
+    const [error, setError]       = useState(false);
+    const [loader,setLoader]      = useState(false);
     
-    const handleEditFunc = (e) =>{
+    const handleEditFunc = async(e) =>{
         e.preventDefault();
-        if(name == "" || id == "" || location == ""){
+        setLoader(true);
+        if(name == "" || level == "" || location == ""){
             setError(true)
             return
         }
-        let schools = JSON.parse(localStorage.getItem('schools'));
-        schools.forEach((school)=>{
-            if(school.id == state.id){
-                school.name = name;
-                school.id = id;
-                school.location = location;
-            }
-        })
-        localStorage.setItem('schools', JSON.stringify(schools) )
+
+        let payload = {
+            name : name, 
+            level: level,
+            location: location,
+        }
+
+        const deleteEntity =  await finalService['put'](payload, state.id)
+
+        if(deleteEntity.data.isSuccessful){
+            setLoader(false);
+        }
         navigate('/')
     }
 
-    const handleCreateFunc = () =>{
-        if(name == "" || id == "" || location == ""){
+    const handleCreateFunc = async(e) =>{
+        e.preventDefault();
+        setLoader(true);
+        if(name == "" || level == "" || location == ""){
             setError(true)
             return
         }
-        let newSchool = {
-            id : id,
-            name: name, 
+        
+        let payload = {
+            name : name, 
+            level: level,
             location: location,
         }
         
-        let schools = localStorage.getItem('schools');
-        if(schools && JSON.parse(schools).length > 0){
-            let allSchools = JSON.parse(schools);
-            allSchools.push(newSchool);
-            localStorage.setItem('schools', JSON.stringify(allSchools))
-        }
-        else{
-            let allSchools = []
-            allSchools.push(newSchool);
-            localStorage.setItem('schools', JSON.stringify(allSchools))
+        
+        const deleteEntity =  await finalService['post'](payload)
+
+        if(deleteEntity.data.isSuccessful){
+            setLoader(false);
         }
         navigate('/')
     }
@@ -62,9 +67,9 @@ export default function EditSchool() {
             <h1>{state ? 'Edit School' : 'Add New School'}</h1>
             <form className='editForm'>
             <div className='label'> 
-                Id
+                Level
             </div>
-            <input required onChange={(e)=>setId(e.target.value)} value={id} />
+            <input required onChange={(e)=>setLevel(e.target.value)} value={level} />
             <div className='label'>
                 Name
             </div>
@@ -75,7 +80,8 @@ export default function EditSchool() {
             <input required onChange={(e)=>setLocation(e.target.value)} value={location}/>
             {error && <div className='error'>Please fill all the fields</div>}
             <div className="bottomButtons">
-                <button onClick={(e)=>{state ? handleEditFunc(e) : handleCreateFunc(e)}} className='btn edit cp'>Save</button>
+                <button onClick={()=>navigate('/')} className='btn back cp'>Back</button>
+                <button style={{display : 'flex'}} onClick={(e)=>{state ? handleEditFunc(e) : handleCreateFunc(e)}} className='btn edit cp'>{loader && <div className='editLoader'></div>}{state ? 'Save' : 'Create'}</button>
             </div>
             </form>
         </div>
